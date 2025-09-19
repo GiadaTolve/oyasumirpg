@@ -1,0 +1,173 @@
+@font-face {
+  font-family: 'oyasumifont'; /* Scegli un nome per il tuo font, es. 'OyasumiFont' */
+  src: url('./assets/fonts/BadBoys.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'bottoni'; /* Diamo un nome al nostro font */
+  src: url('./assets/fonts/LogamRegular-8Mv2J.otf') format('truetype'); /* Percorso al file del font */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'goat'; 
+  src: url('./assets/fonts/GOAT.otf') format('truetype'); /* Percorso al file del font */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'arcade'; 
+  src: url('./assets/fonts/PIXY.otf') format('truetype'); /* Percorso al file del font */
+  font-weight: normal;
+  font-style: normal;
+}
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+
+:root {
+  font-family: 'Work Sans', sans-serif; 
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden; /* <-- Aggiungi questa riga */
+}
+
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+.clickable-icon {
+  transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+  cursor: pointer;
+  will-change: transform, filter; /* Ottimizzazione per le animazioni */
+}
+
+.clickable-icon:hover {
+  filter: brightness(1.2) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+  transform: scale(1.05);
+}
+
+.clickable-icon:active {
+  transform: scale(0.95);
+  filter: brightness(0.8) drop-shadow(0 0 2px rgba(255, 255, 255, 0.2));
+}
+
+@font-face {
+  font-family: 'Gothicha'; /* Questo è il nome che useremo nel CSS */
+  src: url('./assets/fonts/GothichaRegular-d9BjV.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/*TITOLO*/
+/* Contenitore per allineare il titolo e il motto in verticale */
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Stile specifico per il motto */
+.header-motto {
+  font-family: 'arcade';
+  font-size: 0.8rem;
+  color: #c49b2a; /* Un viola chiaro che si abbina alla palette */
+  text-shadow: 0 0 5px #000000; /* Aggiunge un leggero bagliore */
+  margin-top: -50px; /* Avvicina il motto al titolo principale */
+  letter-spacing: 2px; /* Aumenta lo spazio tra le lettere */
+}
+
+.gold-title-effect {
+  font-family: 'Gothicha', sans-serif; /* MODIFICATO QUI */
+  font-size: 6.9rem;
+  
+  /* Stile gradiente e ombra (invariato) */
+  background: linear-gradient(to bottom, #efe784, #cf9a31, #b37f1f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0px 2px 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Aggiungiamo una transizione fluida per l'effetto click */
+.modal-close-button {
+  transition: all 0.1s ease-in-out;
+}
+
+/* Stile che si attiva QUANDO l'utente clicca il pulsante */
+.modal-close-button:active {
+  /* 1. Spostiamo leggermente il pulsante per dare un'idea di pressione */
+  transform: scale(0.95);
+
+  /* 2. Rendiamo il colore del testo trasparente */
+  color: transparent;
+
+  /* 3. Creiamo l'ombra interna che prenderà il posto del testo */
+  /* Questa ombra è scura e leggermente spostata verso il basso,
+       dando l'illusione che la "x" sia stata "scavata" nel pulsante. */
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+}
