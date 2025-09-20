@@ -49,6 +49,7 @@ function App() {
 
   return (
     <BrowserRouter>
+          {console.log("App.jsx si sta renderizzando. Il valore del token è:", token)}
       <div className="App">
         <Routes>
           {!token ? (
