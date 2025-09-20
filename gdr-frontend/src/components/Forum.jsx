@@ -69,7 +69,7 @@ function Forum() {
             setForumData(prevData => prevData.map(sezione => ({ ...sezione, bacheche: sezione.bacheche.map(bacheca => ({ ...bacheca, has_new_posts: false, }))})) );
             await api.post('/forum/mark-all-as-read');
         } catch (error) {
-            console.error("Errore nel segnare tutto come letto:", error);
+            console.error("Errore nel segnare tutto come letto:", error.response);
             fetchForumData();
         }
     };

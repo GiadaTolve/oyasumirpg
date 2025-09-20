@@ -61,7 +61,7 @@ function SchedaPersonaggio({ user, onClose }) {
                 background: response.data.background || ''
             });
         } catch (error) {
-            console.error("Errore nel caricamento della scheda:", error);
+            console.error("Errore nel caricamento della scheda:", error.response);
         } finally {
             setLoading(false);
         }
@@ -81,7 +81,7 @@ function SchedaPersonaggio({ user, onClose }) {
             setIsEditMode(false);
             alert("Profilo aggiornato con successo!");
         } catch (error) {
-            console.error("Errore salvataggio profilo:", error);
+            console.error("Errore salvataggio profilo:", error.response);
             alert(error.response?.data?.message || "Si è verificato un errore durante il salvataggio.");
         }
     };

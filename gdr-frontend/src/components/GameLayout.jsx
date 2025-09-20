@@ -42,7 +42,7 @@ function GameLayout({ user, onLogout }) {
                 setCurrentMap(response.data.mapInfo);
                 setCurrentChildren(response.data.children);
             } catch (error) {
-                console.error("Impossibile caricare la mappa:", error);
+                console.error("Impossibile caricare la mappa:", error.response);
             }
         };
         fetchMapData();

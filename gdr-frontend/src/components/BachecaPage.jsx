@@ -52,7 +52,7 @@ function BachecaPage({ user }) {
             const response = await api.get(`/forum/bacheca/${bachecaId}/topics`);
             setBacheca(response.data.bacheca);
             setTopics(response.data.topics);
-        } catch (error) { console.error("Errore caricamento bacheca:", error); } 
+        } catch (error) { console.error("Errore caricamento bacheca:", error.response); } 
         finally { setLoading(false); }
     }, [bachecaId]);
 

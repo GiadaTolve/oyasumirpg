@@ -111,7 +111,7 @@ import api from '../api';
                     const response = await api.get('/daily-event');
                     setDailyEvent(response.data);
                 } catch (error) {
-                    console.error("Errore nel recupero dell'evento giornaliero:", error);
+                    console.error("Errore nel recupero dell'evento giornaliero:", error.response);
                 }
             };
             fetchDailyEvent();

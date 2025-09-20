@@ -135,7 +135,7 @@ const NewsVisor = () => {
         try {
           const response = await api.get(`/forum/bacheca/${ON_GAME_BACHECA_ID}/latest-topics`);
           setTopics(response.data);
-        } catch (error) { console.error("Errore caricamento notizie:", error); }
+        } catch (error) { console.error("Errore caricamento notizie:", error.response); }
       };
       fetchTopics();
     }, []);
@@ -195,7 +195,7 @@ const NewsVisor = () => {
             try { 
                 const response = await api.get('/scheda'); 
                 setSchedaBreve(response.data); 
-            } catch (err) { console.error("Errore caricamento dati per sidebar", err); } 
+            } catch (err) { console.error("Errore caricamento dati per sidebar", err.response); } 
         }; 
         fetchSchedaBreve(); 
     }, []); 
