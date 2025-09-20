@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Creiamo un'istanza di axios che useremo in tutta l'app
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://oyasumi-server.onrender.com/api',
 });
 
 // Questo è l'intercettore: una funzione che si attiva PRIMA di ogni richiesta

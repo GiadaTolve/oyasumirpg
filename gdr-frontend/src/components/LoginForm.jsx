@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
+import api from '../api'; 
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -10,18 +11,17 @@ function LoginForm({ onLogin }) {
     event.preventDefault();
     setError('');
     try {
-      const response = await axios.post('http://localhost:3000/api/login', {
+      // 3. USA la nostra istanza 'api' e un percorso relativo
+      const response = await api.post('/login', {
         email: email,
         password: password
       });
-      console.log("TOKEN RICEVUTO DAL SERVER:", response.data.token);
-      onLogin(response.data.token); //CHECK
-
       onLogin(response.data.token);
     } catch (err) {
       setError(err.response?.data?.message || 'Errore di connessione');
     }
   };
+
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
