@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+//import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // --- STILI ---
 const styles = {
