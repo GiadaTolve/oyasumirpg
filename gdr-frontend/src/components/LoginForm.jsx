@@ -14,6 +14,9 @@ function LoginForm({ onLogin }) {
         email: email,
         password: password
       });
+      console.log("TOKEN RICEVUTO DAL SERVER:", response.data.token);
+      onLogin(response.data.token); //CHECK
+
       onLogin(response.data.token);
     } catch (err) {
       setError(err.response?.data?.message || 'Errore di connessione');
