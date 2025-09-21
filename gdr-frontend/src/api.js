@@ -1,20 +1,19 @@
 import axios from 'axios';
 
-// Creiamo un'istanza di axios che useremo in tutta l'app
+// Creiamo un'istanza di Axios con una configurazione centralizzata
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://oyasumi-server.onrender.com/api',
+  // QUESTA RIGA È LA SOLUZIONE
+  // Assicura che ogni chiamata inizi con l'indirizzo corretto + /api
+  baseURL: 'https://oyasumi-server.onrender.com/api' 
 });
 
-// Questo è l'intercettore: una funzione che si attiva PRIMA di ogni richiesta
+// Questo codice aggiunge automaticamente il token di autenticazione
+// a ogni richiesta dopo che hai fatto il login.
 api.interceptors.request.use(config => {
-  // Recuperiamo il token dal localStorage
   const token = localStorage.getItem('gdr_token');
-
-  // Se il token esiste, lo aggiungiamo all'header 'Authorization'
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-
   return config;
 }, error => {
   return Promise.reject(error);
