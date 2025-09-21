@@ -1250,14 +1250,39 @@ app.get('/api/forum/bacheca/:bachecaId/latest-topics', verificaToken, async (req
 
 // --- 4. GESTIONE WEBSOCKET ---
 io.use((socket, next) => {
+    console.log("--- NUOVO TENTATIVO DI CONNESSIONE WEBSOCKET ---");
+
     const token = socket.handshake.auth.token;
-    if (!token) return next(new Error("Autenticazione fallita: token mancante."));
+    if (!token) {
+        console.log("DEBUG WS: Autenticazione fallita - Token mancante nella richiesta.");
+        return next(new Error("Autenticazione fallita: token mancante."));
+    }
+    
+    console.log("DEBUG WS: Token ricevuto. Inizio la verifica...");
+
+    // Verifichiamo se la JWT_SECRET è stata caricata correttamente nell'ambiente del server
+    if (process.env.JWT_SECRET) {
+        console.log("DEBUG WS: La variabile JWT_SECRET è presente e caricata.");
+    } else {
+        console.log("DEBUG WS: ERRORE CRITICO - La variabile JWT_SECRET non è definita sul server!");
+        // Se vedi questo errore, il problema è al 100% nella configurazione delle variabili d'ambiente su Render.
+    }
+
     jwt.verify(token, process.env.JWT_SECRET, (err, utente) => {
-        if (err) return next(new Error("Autenticazione fallita: token non valido."));
+        if (err) {
+            // Se la verifica fallisce, stampiamo il motivo esatto
+            console.log("DEBUG WS: ERRORE durante la verifica del token:", err.message);
+            return next(new Error("Autenticazione fallita: token non valido."));
+        }
+
+        // Se la verifica ha successo
+        console.log("DEBUG WS: Verifica del token RIUSCITA! Utente autenticato:", utente.nome_pg);
         socket.utente = utente;
         next();
     });
 });
+
+
 io.on('connection', async (socket) => { 
     try {
         const userData = await db.get("SELECT nome_pg, permesso, avatar_chat FROM utenti WHERE id_utente = ?", [socket.utente.id]);
