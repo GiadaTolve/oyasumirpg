@@ -1299,11 +1299,17 @@ io.use((socket, next) => {
 });
 
 
-io.on('connection', async (socket) => { 
+io.on('connection', async (socket) => {
     try {
         const userData = await db.get("SELECT nome_pg, permesso, avatar_chat FROM utenti WHERE id_utente = ?", [socket.utente.id]);
-        
-        
+
+        // --- AGGIUNTA DI CONTROLLO DI SICUREZZA ---
+        if (!userData) {
+            console.log(`AVVISO: L'utente con ID ${socket.utente.id} dal token non è stato trovato nel DB. Disconnessione forzata.`);
+            return socket.disconnect();
+        }
+        // --- FINE CONTROLLO ---
+
         const userProfile = {
             id: socket.utente.id,
             nome_pg: userData.nome_pg,
@@ -1315,6 +1321,7 @@ io.on('connection', async (socket) => {
         onlineUsers[socket.id] = userProfile;
         userSockets.set(userProfile.id, socket.id); 
         io.emit('update_online_list', Object.values(onlineUsers));
+
         
         const updateRoomUsers = async (chatId) => {
             const socketsInRoom = await io.in(chatId).fetchSockets();
