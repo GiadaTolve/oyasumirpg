@@ -35,3 +35,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Database SQLite e file temporanei
+gdr.db
+gdr.db-shm
+gdr.db-wal
