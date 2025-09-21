@@ -1,1 +1,26 @@
-.env\ngdr.db\ngdr.db-shm\ngdr.db-wal
+# Dipendenze di Node.js
+# Non vogliamo mai caricare le migliaia di file delle librerie
+node_modules/
+
+# File di ambiente
+# Contiene le chiavi segrete (JWT_SECRET, API keys, etc.)
+# NON DEVE MAI essere caricato su Git per motivi di sicurezza
+.env
+
+# Database SQLite e file temporanei
+# Per evitare di sovrascrivere il database di produzione a ogni deploy
+gdr.db
+gdr.db-shm
+gdr.db-wal
+
+# Log di errori e debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# File generati dal sistema operativo o dall'editor di codice
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
