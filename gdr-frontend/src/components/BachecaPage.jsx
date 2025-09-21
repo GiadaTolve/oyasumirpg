@@ -58,17 +58,16 @@ function BachecaPage({ user }) {
 
     useEffect(() => { fetchBachecaData(); }, [fetchBachecaData]);
 
-    const handleMarkBachecaAsRead = async () => {
+    const handleMarkAllAsRead = async () => {
         try {
-            setTopics(prevTopics =>
-                prevTopics.map(t => ({ ...t, has_new_posts: false }))
-            );
-            await api.post('/api/forum/mark-all-as-read');
-        } catch (error) {
-            console.error("Errore nel segnare la bacheca come letta:", error);
-            fetchBachecaData();
+            // Questo è l'URL generico e CORRETTO che esiste sul server
+            await api.post('/forum/mark-all-as-read');
+            // ... ricarica i dati o aggiorna lo stato per riflettere la modifica
+        } catch (err) {
+            console.error("Errore nel segnare tutto come letto:", err);
         }
     };
+    
 
     const handleTopicCreated = () => { setIsFormVisible(false); fetchBachecaData(); };
 
