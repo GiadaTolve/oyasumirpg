@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api';
-//import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+// --- ERRORE CORRETTO: Import Rimosso ---
+// import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // --- STILI ---
 const styles = {
+  // ... (tutti i tuoi stili rimangono invariati)
   panelWrapper: { width: '100%', height: '100%', backgroundColor: 'rgba(23, 23, 23, 0.9)', display: 'flex', fontFamily: "'Work Sans', sans-serif", borderRadius: '5px', overflow: 'hidden' },
   nav: { width: '250px', flexShrink: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '15px', borderRight: '1px solid #320d41' },
   navButton: { width: '90%', padding: '15px 20px', backgroundColor: '#2a292f', color: '#a4a5b9', border: '1px solid #31323e', borderRadius: '3px', textAlign: 'center', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '1px', fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s ease-in-out' },
@@ -30,8 +32,8 @@ const styles = {
 };
 
 
-// --- INIZIO SOTTCOMPOMENTI ---
-
+// --- INIZIO SOTTCOMPOMENTI (INVARIATI) ---
+// ... (tutti i componenti come EditUserModal, UserManagement, etc. rimangono uguali)
 const EditUserModal = ({ user, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...user, password: '' });
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,9 +74,29 @@ const LocationCreator = ({ parentId, onCreate }) => {
     return ( <form onSubmit={handleSubmit} style={{padding: '10px', margin: '10px 0', background: 'rgba(0,0,0,0.2)', borderRadius: '5px'}}><div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}><select name="type" value={formData.type} onChange={handleChange} style={{...styles.input, width: 'auto'}}><option value="MAP">Mappa</option><option value="CHAT">Chat</option></select><input style={{...styles.input, flexGrow: 1}} type="text" name="name" placeholder="Nome" value={formData.name} onChange={handleChange} required /><button type="submit" style={styles.button}>Crea</button></div></form> );
 };
 
+// --- ERRORE CORRETTO: Componenti del Drag&Drop disattivati ---
 const LocationNode = ({ node, index, onCreate, onDelete, onEdit }) => {
     const [showCreator, setShowCreator] = useState(false);
-    return ( <Draggable draggableId={String(node.id)} index={index}>{(provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} style={{ padding: '15px', border: '1px solid #444', marginBottom: '10px', backgroundColor: snapshot.isDragging ? '#4a4b57' : (node.type === 'MAP' ? 'rgba(96, 81, 155, 0.2)' : 'rgba(0, 0, 0, 0.2)'), ...provided.draggableProps.style }}><div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px'}}><span {...provided.dragHandleProps} style={{fontWeight: 'bold', cursor: 'grab'}}>{node.name} <span style={{fontWeight: 'normal'}}>({node.type})</span></span><div style={{display: 'flex', gap: '10px'}}><button onClick={() => onEdit(node)} style={{...styles.button, backgroundColor: '#3c3c3c'}}>Modifica</button><button onClick={() => setShowCreator(!showCreator)} style={{...styles.button, backgroundColor: '#3c3c3c'}}>{showCreator ? 'Annulla' : 'Aggiungi Figlio'}</button><button onClick={() => onDelete(node.id)} style={{...styles.button, backgroundColor: '#8b0000'}}>Elimina</button></div></div>{showCreator && <LocationCreator parentId={node.id} onCreate={(data) => { onCreate(data); setShowCreator(false); }} />}{node.type === 'MAP' && (<Droppable droppableId={String(node.id)} type="LOCATION">{(dropProvided, dropSnapshot) => (<div ref={dropProvided.innerRef} {...dropProvided.droppableProps} style={{ padding: '10px', marginTop: '10px', minHeight: '50px', transition: 'background-color 0.2s ease', backgroundColor: dropSnapshot.isDraggingOver ? styles.dropzoneActive.backgroundColor : 'transparent' }}>{node.children && node.children.map((child, childIndex) => (<LocationNode key={child.id} node={child} index={childIndex} onCreate={onCreate} onDelete={onDelete} onEdit={onEdit} />))}{dropProvided.placeholder}</div>)}</Droppable>)}</div>)}</Draggable> );
+    return (
+        <div style={{ padding: '15px', border: '1px solid #444', marginBottom: '10px', backgroundColor: (node.type === 'MAP' ? 'rgba(96, 81, 155, 0.2)' : 'rgba(0, 0, 0, 0.2)') }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px'}}>
+                <span style={{fontWeight: 'bold'}}>{node.name} <span style={{fontWeight: 'normal'}}>({node.type})</span></span>
+                <div style={{display: 'flex', gap: '10px'}}>
+                   <button onClick={() => onEdit(node)} style={{...styles.button, backgroundColor: '#3c3c3c'}}>Modifica</button>
+                   <button onClick={() => setShowCreator(!showCreator)} style={{...styles.button, backgroundColor: '#3c3c3c'}}>{showCreator ? 'Annulla' : 'Aggiungi Figlio'}</button>
+                   <button onClick={() => onDelete(node.id)} style={{...styles.button, backgroundColor: '#8b0000'}}>Elimina</button>
+                </div>
+            </div>
+            {showCreator && <LocationCreator parentId={node.id} onCreate={(data) => { onCreate(data); setShowCreator(false); }} />}
+            {node.type === 'MAP' && (
+                <div style={{ padding: '10px', marginTop: '10px', minHeight: '50px' }}>
+                    {node.children && node.children.map((child, childIndex) => (
+                        <LocationNode key={child.id} node={child} index={childIndex} onCreate={onCreate} onDelete={onDelete} onEdit={onEdit} />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 };
 
 const MapManagement = () => {
@@ -83,14 +105,27 @@ const MapManagement = () => {
     const buildTree = (list) => { const map = {}; const roots = []; if (!list) return roots; list.forEach(item => { map[item.id] = { ...item, children: [] }; }); list.forEach(item => { if (item.parent_id !== null && map[item.parent_id]) { map[item.parent_id].children.push(map[item.id]); } else { roots.push(map[item.id]); } }); return roots; };
     const fetchLocations = useCallback(async () => { try { const res = await api.get('/admin/locations'); setLocations(res.data); } catch (e) { console.error(e); } }, []);
     useEffect(() => { fetchLocations(); }, [fetchLocations]);
-    const onDragEnd = async (result) => { const { destination, source, draggableId } = result; if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) return; const locationId = draggableId; const newParentId = destination.droppableId === 'root-dropzone' ? null : destination.droppableId; try { await api.put(`/admin/locations/${locationId}/parent`, { newParentId }); fetchLocations(); } catch (error) { console.error("Errore spostamento:", error); alert("Spostamento non riuscito."); } };
+    // onDragEnd non è più necessario
     const handleCreate = async (data) => { try { await api.post('/admin/locations', data); fetchLocations(); } catch (e) { console.error(e); } };
     const handleDelete = async (id) => { if (window.confirm("Sei sicuro? L'azione è irreversibile e cancellerà TUTTI i figli.")) { try { await api.delete(`/admin/locations/${id}`); fetchLocations(); } catch(e) { console.error(e); } } };
     const handleSave = async (data) => { try { await api.put(`/admin/locations/${data.id}`, data); setEditingLocation(null); fetchLocations(); } catch (e) { console.error(e); } };
     const tree = buildTree(locations);
-    return ( <DragDropContext onDragEnd={onDragEnd}><div>{editingLocation && <LocationEditorModal location={editingLocation} onSave={handleSave} onCancel={() => setEditingLocation(null)} />}<h3>Crea Nuova Mappa Radice</h3><LocationCreator parentId={null} onCreate={handleCreate} /><hr style={{borderColor: '#444', margin: '30px 0'}}/><h3>Struttura Esistente (Trascina per spostare)</h3><Droppable droppableId="root-dropzone" type="LOCATION">{(provided, snapshot) => (<div ref={provided.innerRef} {...provided.droppableProps} style={{ padding: '10px', border: '2px dashed #444', minHeight: '100px', backgroundColor: snapshot.isDraggingOver ? styles.dropzoneActive.backgroundColor : 'transparent' }}>{tree.map((node, index) => ( <LocationNode key={node.id} node={node} index={index} onCreate={handleCreate} onDelete={handleDelete} onEdit={setEditingLocation} /> ))}{provided.placeholder}</div>)}</Droppable></div></DragDropContext> );
+    return (
+        <div>
+            {editingLocation && <LocationEditorModal location={editingLocation} onSave={handleSave} onCancel={() => setEditingLocation(null)} />}
+            <h3>Crea Nuova Mappa Radice</h3>
+            <LocationCreator parentId={null} onCreate={handleCreate} />
+            <hr style={{borderColor: '#444', margin: '30px 0'}}/>
+            <h3>Struttura Esistente (Drag & Drop Disattivato)</h3>
+            <div style={{ padding: '10px', border: '2px dashed #444', minHeight: '100px' }}>
+                {tree.map((node, index) => (
+                    <LocationNode key={node.id} node={node} index={index} onCreate={handleCreate} onDelete={handleDelete} onEdit={setEditingLocation} />
+                ))}
+            </div>
+        </div>
+    );
 };
-
+// ... (tutti gli altri componenti come SezioneEditor, BachecaEditor, etc. rimangono uguali)
 const SezioneEditor = ({ sezione, onSave, onCancel }) => {
   const [formData, setFormData] = useState(sezione.id ? sezione : { nome: '', descrizione: '', ordine: 0 }); const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value }); const handleSubmit = (e) => { e.preventDefault(); onSave(formData); };
   return (<div style={styles.modalOverlay}><div style={styles.modalContent} onClick={e => e.stopPropagation()}><h3>{sezione.id ? 'Modifica' : 'Nuova'} Sezione</h3><form onSubmit={handleSubmit}><div style={styles.formGroup}><label>Nome</label><input style={styles.input} type="text" name="nome" value={formData.nome} onChange={handleChange} required /></div><div style={styles.formGroup}><label>Descrizione</label><input style={styles.input} type="text" name="descrizione" value={formData.descrizione || ''} onChange={handleChange} /></div><div style={styles.formGroup}><label>Ordine</label><input style={styles.input} type="number" name="ordine" value={formData.ordine} onChange={handleChange} /></div><button type="submit" style={styles.button}>Salva</button><button type="button" style={{...styles.button, marginLeft: '10px', backgroundColor: '#555'}} onClick={onCancel}>Annulla</button></form></div></div>);
@@ -120,7 +155,7 @@ const ForumManagement = () => {
   const [activeTab, setActiveTab] = useState('bacheche'); const [sezioni, setSezioni] = useState([]);
   const fetchSezioni = useCallback(async () => { try { const res = await api.get('/admin/forum/sezioni'); setSezioni(res.data); } catch (e) { console.error(e); } }, []); useEffect(() => { fetchSezioni(); }, [fetchSezioni]);
   const getTabButtonStyle = (tabName) => ({ ...styles.navButton, ...(activeTab === tabName ? styles.activeNavButton : {}) });
-  return (<div><div style={styles.tabsContainer}><button style={getTabButtonStyle('bacheche')} onClick={() => setActiveTab('bacheche')}>Gestione Bacheche</button><button style={getTabButtonStyle('sezioni')} onClick={() => setActiveTab('sezioni')}>Gestione Sezioni</button></div>{activeTab === 'bacheche' ? <div key="bacheche-manager"><BachecheManager sezioniDisponibili={sezioni} /></div> : <div key="sezioni-manager"><SezioniManager sezioni={sezioni} onUpdate={fetchSezioni} /></div>}</div>);
+  return (<div><div style={styles.tabsContainer}><button style={getTabButtonStyle('bacheche')} onClick={() => setActiveTab('bacheche')}>Gestione Bacheche</button><button style={getTabButtonStyle('sezioni')} onClick={() => setActiveTab('sezioni')}>Gestione Sezioni</button></div>{activeTab === 'bacheche' ? <BachecheManager sezioniDisponibili={sezioni} /> : <SezioniManager sezioni={sezioni} onUpdate={fetchSezioni} />}</div>);
 };
 
 const BannerManagement = () => {
@@ -144,11 +179,26 @@ const DailyEventModal = ({ event, onSave, onCancel }) => {
   const [formData, setFormData] = useState(event || { event_date: '', title: '', description: '' });
   const handleChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); };
   const handleSubmit = (e) => { e.preventDefault(); onSave(formData); };
-  return ( <div style={styles.modalOverlay} onClick={onCancel}><div style={styles.modalContent} onClick={e => e.stopPropagation()}><h3>{event ? 'Modifica Evento' : 'Crea Nuovo Evento'}</h3><form onSubmit={handleSubmit}><div style={styles.formGroup}><label>Data (YYYY-MM-DD)</label><input style={styles.input} type="date" name="event_date" value={formData.event_date} onChange={handleChange} required /></div><div style={styles.formGroup}><label>Titolo</label><input style={styles.input} type="text" name="title" value={formData.title} onChange={handleChange} required /></div><div style={styles.formGroup}><label>Descrizione</label><textarea style={{...styles.input, minHeight: '100px'}} name="description" value={formData.description} onChange={handleChange} required></textarea></div><button type="submit" style={styles.button}>Salva</button><button type="button" style={{...styles.button, marginLeft: '10px'}} onClick={onCancel}>Annulla</button></form></div></div> );
+  return (
+      <div style={styles.modalOverlay} onClick={onCancel}>
+          <div style={styles.modalContent} onClick={e => e.stopPropagation()}>
+              <h3>{event ? 'Modifica Evento' : 'Crea Nuovo Evento'}</h3>
+              <form onSubmit={handleSubmit}><div style={styles.formGroup}><label>Data (YYYY-MM-DD)</label><input style={styles.input} type="date" name="event_date" value={formData.event_date} onChange={handleChange} required /></div><div style={styles.formGroup}><label>Titolo</label><input style={styles.input} type="text" name="title" value={formData.title} onChange={handleChange} required /></div><div style={styles.formGroup}><label>Descrizione</label><textarea style={{...styles.input, minHeight: '100px'}} name="description" value={formData.description} onChange={handleChange} required></textarea></div><button type="submit" style={styles.button}>Salva</button><button type="button" style={{...styles.button, marginLeft: '10px'}} onClick={onCancel}>Annulla</button></form>
+          </div>
+      </div>
+  );
 };
 
 const DailyEventsManagement = ({ events, onEdit, onDelete, onNew }) => {
-  return ( <div><button style={styles.actionButton} onClick={onNew}>+ Crea Nuovo Evento</button><table style={styles.table}><thead><tr><th style={styles.thTd}>Data</th><th style={styles.thTd}>Titolo</th><th style={styles.thTd}>Azioni</th></tr></thead><tbody>{events && events.length > 0 ? ( events.map(event => (<tr key={event.id}><td style={styles.thTd}>{event.event_date}</td><td style={styles.thTd}>{event.title}</td><td style={styles.thTd}><button style={styles.button} onClick={() => onEdit(event)}>Modifica</button><button style={{...styles.button, marginLeft: '10px'}} onClick={() => onDelete(event.id)}>Elimina</button></td></tr>)) ) : ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Nessun evento.</td></tr> )}</tbody></table></div> );
+  return (
+      <div>
+          <button style={styles.actionButton} onClick={onNew}>+ Crea Nuovo Evento</button>
+          <table style={styles.table}>
+              <thead><tr><th style={styles.thTd}>Data</th><th style={styles.thTd}>Titolo</th><th style={styles.thTd}>Azioni</th></tr></thead>
+              <tbody>{events && events.length > 0 ? ( events.map(event => (<tr key={event.id}><td style={styles.thTd}>{event.event_date}</td><td style={styles.thTd}>{event.title}</td><td style={styles.thTd}><button style={styles.button} onClick={() => onEdit(event)}>Modifica</button><button style={{...styles.button, marginLeft: '10px'}} onClick={() => onDelete(event.id)}>Elimina</button></td></tr>)) ) : ( <tr><td colSpan="3" style={{textAlign: 'center'}}>Nessun evento.</td></tr> )}</tbody>
+          </table>
+      </div>
+  );
 };
 
 const SongEditorModal = ({ song, onSave, onCancel, playlists }) => {
@@ -156,7 +206,22 @@ const SongEditorModal = ({ song, onSave, onCancel, playlists }) => {
   const [formData, setFormData] = useState(isEditing ? song : { playlist_id: playlists[0]?.id || '', title: '', source_type: 'youtube', url: '', cover_image_url: '' });
   const handleChange = e => setFormData({...formData, [e.target.name]: e.target.value});
   const handleSubmit = e => { e.preventDefault(); onSave(formData); };
-  return ( <div style={styles.modalOverlay}><div style={styles.modalContent}><h3>{isEditing ? 'Modifica Canzone' : 'Aggiungi Canzone'}</h3><form onSubmit={handleSubmit}><div style={styles.formGroup}><label>Playlist</label><select name="playlist_id" value={formData.playlist_id} onChange={handleChange} style={styles.input}>{playlists.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div><div style={styles.formGroup}><label>Titolo</label><input style={styles.input} type="text" name="title" value={formData.title} onChange={handleChange} required/></div><div style={styles.formGroup}><label>Tipo</label><select name="source_type" value={formData.source_type} onChange={handleChange} style={styles.input}><option value="youtube">YouTube</option><option value="mp3">MP3 Link</option></select></div><div style={styles.formGroup}><label>URL</label><input style={styles.input} type="text" name="url" value={formData.url} onChange={handleChange} required/></div><div style={styles.formGroup}><label>URL Copertina</label><input style={styles.input} type="text" name="cover_image_url" value={formData.cover_image_url || ''} onChange={handleChange} /></div><button type="submit" style={styles.button}>{isEditing ? 'Salva' : 'Aggiungi'}</button><button type="button" style={{...styles.button, marginLeft: '10px'}} onClick={onCancel}>Annulla</button></form></div></div> );
+  return (
+      <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+              <h3>{isEditing ? 'Modifica Canzone' : 'Aggiungi Canzone'}</h3>
+              <form onSubmit={handleSubmit}>
+                  <div style={styles.formGroup}><label>Playlist</label><select name="playlist_id" value={formData.playlist_id} onChange={handleChange} style={styles.input}>{playlists.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></div>
+                  <div style={styles.formGroup}><label>Titolo</label><input style={styles.input} type="text" name="title" value={formData.title} onChange={handleChange} required/></div>
+                  <div style={styles.formGroup}><label>Tipo</label><select name="source_type" value={formData.source_type} onChange={handleChange} style={styles.input}><option value="youtube">YouTube</option><option value="mp3">MP3 Link</option></select></div>
+                  <div style={styles.formGroup}><label>URL</label><input style={styles.input} type="text" name="url" value={formData.url} onChange={handleChange} required/></div>
+                  <div style={styles.formGroup}><label>URL Copertina</label><input style={styles.input} type="text" name="cover_image_url" value={formData.cover_image_url || ''} onChange={handleChange} /></div>
+                  <button type="submit" style={styles.button}>{isEditing ? 'Salva' : 'Aggiungi'}</button>
+                  <button type="button" style={{...styles.button, marginLeft: '10px'}} onClick={onCancel}>Annulla</button>
+              </form>
+          </div>
+      </div>
+  );
 };
 
 const MusicManagement = () => {
