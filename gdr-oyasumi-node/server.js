@@ -692,37 +692,6 @@ app.get('/api/forum', verificaToken, async (req, res) => {
 });
 
 
-app.get('/api/forum/bacheca/:bachecaId/topics', verificaToken, async (req, res) => {
-    try {
-        const { bachecaId } = req.params;
-        const { id: userId } = req.utente;
-
-        const bacheca = await db.get("SELECT * FROM forum_bacheche WHERE id = ?", [bachecaId]);
-        if (!bacheca) return res.status(404).json({ message: 'Bacheca non trovata.' });
-
-        const topics = await db.all(`
-            SELECT
-                t.*,
-                u.nome_pg AS autore_nome,
-                (SELECT COUNT(p.id) FROM forum_posts p WHERE p.topic_id = t.id) as post_count,
-                (SELECT u2.nome_pg FROM forum_posts p2 JOIN utenti u2 ON p2.autore_id = u2.id_utente WHERE p2.topic_id = t.id ORDER BY p2.timestamp_creazione DESC LIMIT 1) as ultimo_post_autore,
-
-                -- --- ECCO LA LOGICA CORRETTA ---
-                -- Se la data dell'ultimo post è più recente della data di lettura, O se la data di lettura non esiste (IFNULL), allora ci sono nuovi post.
-                (t.ultimo_post_timestamp > IFNULL((SELECT r.last_read_timestamp FROM forum_topic_reads r WHERE r.topic_id = t.id AND r.user_id = ?), '1970-01-01 00:00:00')) as has_new_posts
-
-            FROM forum_topics t
-            JOIN utenti u ON t.autore_id = u.id_utente
-            WHERE t.bacheca_id = ?
-            ORDER BY t.is_pinned DESC, t.ultimo_post_timestamp DESC
-        `, [userId, bachecaId]);
-
-        res.json({ bacheca, topics });
-    } catch (error) {
-        console.error("Errore recupero topics per bacheca:", error);
-        res.status(500).json({ message: "Errore interno del server." });
-    }
-});
 
 app.get('/api/forum/topic/:topicId', verificaToken, async (req, res) => {
     try {
