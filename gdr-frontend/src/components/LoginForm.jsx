@@ -51,7 +51,9 @@ function LoginForm({ onLogin }) {
         />
       </div>
       
-      <button type="submit" className="button-style">Accedi</button>
+      <button type="submit" className="button-style"
+              onClick={() => console.log("CLICK SUL PULSANTE RILEVATO!")}
+>Accedi</button>
     </form>
   );
 }
