@@ -22,9 +22,25 @@ const port = process.env.PORT || 3000;
 const httpServer = http.createServer(app);
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-const io = new Server(httpServer, {
-  cors: { origin: frontendURL }
-});
+const allowedOrigins = [
+    "http://localhost:5173", // Per lo sviluppo in locale
+    "https://oyasumirpg.onrender.com" // L'indirizzo del tuo sito online
+  ];
+  
+  const io = new Server(httpServer, {
+    cors: {
+      origin: function (origin, callback) {
+        // Permetti le richieste senza 'origin' (es. app mobile o Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+          const msg = 'La policy CORS per questa risorsa non permette l\'accesso dall\'origine specificata.';
+          return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+      }
+    }
+  });
+  
 
 let db;
 let onlineUsers = {};
