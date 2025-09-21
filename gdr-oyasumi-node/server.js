@@ -93,10 +93,18 @@ const verificaAdmin = (req, res, next) => {
 app.get('/', (req, res) => res.send('Il server è attivo!'));
 
 app.post('/api/register', async (req, res) => {
+    // --- AGGIUNGI QUESTI LOG DI DEBUG ---
+    console.log("--- NUOVA RICHIESTA DI REGISTRAZIONE RICEVUTA ---");
+    console.log("Dati ricevuti dal frontend (req.body):", req.body);
+    // --- FINE DEI LOG DI DEBUG ---
+
     try {
-        // 1. Estrai il nuovo campo dal body della richiesta
         const { email, password, nome_pg, playerPreferences } = req.body;
-        if (!email || !password || !nome_pg) return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
+
+        if (!email || !password || !nome_pg) {
+            console.log("REGISTRAZIONE FALLITA: Dati obbligatori mancanti.");
+            return res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
+        }
         
         const hashedPassword = await bcrypt.hash(password, 10);
         
