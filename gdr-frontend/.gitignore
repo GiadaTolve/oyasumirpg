@@ -1,0 +1,33 @@
+# Dipendenze di Node.js
+# Non vogliamo mai caricare le migliaia di file delle librerie
+node_modules/
+
+# File di ambiente
+# Contengono variabili specifiche per il tuo computer (es. chiavi API per test)
+# NON DEVONO MAI essere caricati su Git per motivi di sicurezza
+.env
+.env.local
+.env.*.local
+
+# Build di produzione
+# La cartella 'dist' viene generata ogni volta che fai il build
+# ed è inutile tenerla su Git
+dist/
+dist-ssr/
+*.local
+
+# Log di errori e debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Cache di Vite e report di test
+.vite/
+coverage/
+
+# File generati dal sistema operativo o dall'editor di codice
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
