@@ -1,7 +1,15 @@
-// src/components/WeatherWidget.jsx
-
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+
+// --- CORREZIONE: Definiamo lo stile condiviso qui fuori ---
+const weatherInfoStyle = {
+    display: 'flex',
+    alignItems: 'left',
+    justifyContent: 'left',
+    marginLeft: '15px',
+    gap: '25px',
+    flexGrow: 1,
+};
 
 const styles = {
     widget: {
@@ -24,14 +32,8 @@ const styles = {
         color: '#888',
         marginBottom: '10px',
     },
-    weatherInfo: {
-        display: 'flex',
-        alignItems: 'left',
-        justifyContent: 'left',
-        marginLeft: '15px',
-        gap: '25px',
-        flexGrow: 1,
-    },
+    // Usiamo la costante definita sopra
+    weatherInfo: weatherInfoStyle,
     weatherIcon: {
         marginTop: '-12px',
         width: '42px',
@@ -58,9 +60,9 @@ const styles = {
         height: '100%',
         filter: 'drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.86))',
     },
-    // Stile per il messaggio di errore/caricamento
+    // Usiamo la costante anche qui, senza 'this'
     statusText: {
-        ...this.weatherInfo,
+        ...weatherInfoStyle,
         fontSize: '12px',
         fontStyle: 'italic',
         color: '#888',
@@ -69,7 +71,7 @@ const styles = {
 
 function WeatherWidget({ currentMap, onToggleCalendar }) { 
     const [weather, setWeather] = useState(null);
-    const [error, setError] = useState(null); // --- 1. Aggiungiamo uno stato per l'errore
+    const [error, setError] = useState(null);
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
@@ -81,13 +83,12 @@ function WeatherWidget({ currentMap, onToggleCalendar }) {
         const locationToFetch = currentMap?.prefecture || 'Tokyo';
         
         const fetchWeather = async () => {
-            setWeather(null); // Resettiamo il meteo precedente
-            setError(null); // Resettiamo l'errore precedente
+            setWeather(null);
+            setError(null);
             try {
                 const response = await api.get(`/weather?location=${locationToFetch}`);
                 setWeather(response.data);
             } catch (err) {
-                // --- 2. In caso di errore, lo salviamo in console E nello stato
                 console.error("Errore nel caricamento del meteo:", err.response || err);
                 setError("Meteo non disponibile");
                 setWeather(null);
@@ -104,7 +105,6 @@ function WeatherWidget({ currentMap, onToggleCalendar }) {
         <div style={styles.widget}>
             <div style={styles.dateTime}>{formattedDate} - {formattedTime}</div>
             
-            {/* --- 3. Logica di visualizzazione migliorata --- */}
             {weather ? (
                 <div style={styles.weatherInfo}>
                     <img src={`/meteo/${weather.icon}`} alt={weather.description} style={styles.weatherIcon} />
