@@ -6,12 +6,13 @@ function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+    setLoading(true); // 2. Imposta loading a true all'inizio
     try {
-      // 3. USA la nostra istanza 'api' e un percorso relativo
       const response = await api.post('/login', {
         email: email,
         password: password
@@ -19,9 +20,10 @@ function LoginForm({ onLogin }) {
       onLogin(response.data.token);
     } catch (err) {
       setError(err.response?.data?.message || 'Errore di connessione');
+    } finally {
+      setLoading(false); // 3. In ogni caso, imposta loading a false alla fine
     }
   };
-
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
@@ -51,9 +53,9 @@ function LoginForm({ onLogin }) {
         />
       </div>
       
-      <button type="submit" className="button-style"
-              onClick={() => console.log("CLICK SUL PULSANTE RILEVATO!")}
->Accedi</button>
+      <button type="submit" className="button-style" disabled={loading}>
+        {loading ? 'Accesso in corso...' : 'Accedi'}
+      </button>
     </form>
   );
 }
