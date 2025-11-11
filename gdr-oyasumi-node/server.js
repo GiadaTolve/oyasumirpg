@@ -22,31 +22,37 @@ const port = process.env.PORT || 3000;
 const httpServer = http.createServer(app);
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
 
-const allowedOrigins = [
-    "http://localhost:5173", // Per lo sviluppo in locale
-    "https://oyasumirpg.onrender.com" // L'indirizzo del tuo sito online
-  ];
-  
-  const io = new Server(httpServer, {
-    cors: {
-      origin: function (origin, callback) {
-        // Permetti le richieste senza 'origin' (es. app mobile o Postman)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-          const msg = 'La policy CORS per questa risorsa non permette l\'accesso dall\'origine specificata.';
-          return callback(new Error(msg), false);
-        }
-        return callback(null, true);
+const frontendProdURL = "https://oyasumirpg.onrender.com"; // <-- METTI QUI L'URL DEL TUO SITO STATICO
+const frontendDevURL = "http://localhost:5173"; // <-- L'URL del tuo PC 
+
+// Opzioni CORS che useremo ovunque
+const corsOptions = {
+    origin: function (origin, callback) {
+      // Permetti le richieste senza 'origin' (es. app mobile o Postman)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'La policy CORS non permette l\'accesso da questa origine.';
+        return callback(new Error(msg), false);
       }
+      return callback(null, true);
     }
-  });
+};
+
+const allowedOrigins = [
+        "http://localhost:5173", // Per lo sviluppo in locale
+        "https://oyasumirpg.onrender.com" // L'indirizzo CORRETTO del tuo sito online
+    ];
+
+  
+    const io = new Server(httpServer, {
+            cors: corsOptions // Ora usa la funzione unificata
+        });
   
 
 let db;
 let onlineUsers = {};
 let userSockets = new Map(); // <-- AGGIUNGI QUESTO
-
-
 
 
 // --- HELPER FUNCTIONS ---
@@ -57,18 +63,11 @@ function calculateLevel(exp) {
 }
 
 // --- 2. MIDDLEWARE ---
-app.use(cors());
+app.use(cors(corsOptions)); // <-- Ora usa le opzioni unificate CORRETTE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- 2. MIDDLEWARE ---
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
-
 // --- 3. API ROUTES ---
-
-// Middleware di verifica permessi
 // Middleware di verifica permessi
 const verificaAdmin = (req, res, next) => {
     if (req.utente?.permesso === 'ADMIN') next();
