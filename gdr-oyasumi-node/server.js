@@ -1623,16 +1623,29 @@ app.get('/api/pm/conversation/:userId', verificaToken, async (req, res) => {
 // FINE MESSAGGI PRIVATI 
 
 
-// --- 5. FUNZIONE DI AVVIO ---
 const avviaApplicazione = async () => {
     try {
-        db = await open({ filename: './gdr.db', driver: sqlite3.Database });
+        // --- INIZIO BLOCCO MODIFICATO ---
+
+        // 1. Definisci il percorso del disco.
+        //    Render imposta questa variabile d'ambiente. 
+        //    Se non c'è (es. sul tuo PC), usa la cartella corrente ('.')
+        const dbPath = process.env.RENDER_DISK_MOUNT_PATH || '.';
+        
+        // 2. Componi il nome completo del file del database.
+        const dbFilePath = `${dbPath}/gdr.db`;
+
+        // 3. Aggiungi un log per essere sicuro che stia funzionando!
+        console.log(`Database in uso: ${dbFilePath}`); 
+
+        // 4. Apri il database usando il percorso corretto
+        db = await open({ filename: dbFilePath, driver: sqlite3.Database });
+
+        // --- FINE BLOCCO MODIFICATO ---
+
         await db.run('PRAGMA foreign_keys = ON;');
         await db.run('PRAGMA journal_mode = WAL;');
         console.log('DB Connesso.');
-
-        // --- Creazione e Aggiornamento Tabelle ---
-// Dentro la funzione avviaApplicazione in server.js
 
 await db.exec(`
     CREATE TABLE IF NOT EXISTS utenti (
