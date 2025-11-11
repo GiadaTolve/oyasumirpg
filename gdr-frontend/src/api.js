@@ -4,7 +4,7 @@ import axios from 'axios';
 const api = axios.create({
   // QUESTA RIGA È LA SOLUZIONE
   // Assicura che ogni chiamata inizi con l'indirizzo corretto + /api
-  baseURL: 'https://oyasumi-server.onrender.com/api' 
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000'
 });
 
 // Questo codice aggiunge automaticamente il token di autenticazione
