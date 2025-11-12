@@ -1,10 +1,12 @@
 import axios from 'axios';
 
-// Creiamo un'istanza di Axios con una configurazione centralizzata
+// 1. Definiamo l'URL di base SENZA /api
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+// 2. Creiamo l'istanza di Axios
 const api = axios.create({
-  // QUESTA RIGA È LA SOLUZIONE
-  // Assicura che ogni chiamata inizi con l'indirizzo corretto + /api
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000'
+  // 3. Aggiungiamo /api al baseURL in modo programmatico
+  baseURL: `${BASE_URL}/api`
 });
 
 // Questo codice aggiunge automaticamente il token di autenticazione
