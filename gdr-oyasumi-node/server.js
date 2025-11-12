@@ -206,6 +206,36 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// --- INIZIO BACKDOOR TEMPORANEO PER PASSWORD ---
+app.get('/api/admin/force-password-reset', verificaAdmin, async (req, res) => {
+    try {
+        const emailToReset = 'tolvegiada@gmail.com';
+        const newPassword = 'LaTuaNuovaPasswordSicura123'; // <-- CAMBIA QUESTA!
+
+        if (!newPassword) {
+            return res.status(400).json({ message: 'Specifica una nuova password.' });
+        }
+
+        console.log(`--- RICHIESTA FORZATURA PASSWORD PER: ${emailToReset} ---`);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        
+        await db.run(
+            "UPDATE utenti SET password = ? WHERE email = ?", 
+            [hashedPassword, emailToReset]
+        );
+        
+        console.log(`--- PASSWORD PER ${emailToReset} AGGIORNATA CON SUCCESSO ---`);
+        res.status(200).json({ message: `Password per ${emailToReset} aggiornata.` });
+
+    } catch (error) {
+        console.error("ERRORE FORZATURA PASSWORD:", error);
+        res.status(500).json({ message: 'Errore interno del server.' });
+    }
+});
+// --- FINE BACKDOOR TEMPORANEO ---
+
+
+
 app.get('/api/users/find', verificaToken, async (req, res) => {
     console.log("\n=============================================");
     console.log("DEBUG: Richiesta ricevuta su /api/users/find");
