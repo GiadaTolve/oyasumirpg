@@ -9,7 +9,6 @@ node_modules/
 
 # Database SQLite e file temporanei
 # Per evitare di sovrascrivere il database di produzione a ogni deploy
-gdr.db
 gdr.db-shm
 gdr.db-wal
 
